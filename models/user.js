@@ -134,7 +134,7 @@ User.prototype.create = function(name){
 
             _user.attributes = newDoc;
             events.emit('newUser');
-            return resolve(_user);
+            return resolve(_user.attributes);
         });
     })
 };
