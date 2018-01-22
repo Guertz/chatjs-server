@@ -1,6 +1,6 @@
 var crypto = require('crypto');
-var database  = require('./helper.js').database;
-const events  = require('./helper.js').events;
+var database  = require('../helper/helper.js').database;
+const events  = require('../helper/helper.js').events;
 const generatePushID  = require('./chat/push-id.js');
 
 function Chat(_ref = false){

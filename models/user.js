@@ -1,9 +1,9 @@
 var identicon = require('identicon');
 var fs = require('fs');
 var crypto = require('crypto');
-var database  = require('./helper.js').database;
-const events  = require('./helper.js').events;
-const keepKeys  = require('./helper.js').keepKeys;
+var database  = require('../helper/helper.js').database;
+const events  = require('../helper/helper.js').events;
+const keepKeys  = require('../helper/helper.js').keepKeys;
 
 function User(){
 
@@ -65,7 +65,7 @@ User.prototype.connect = function(id){
                         return reject("Failed insert"); // Error generator
         
                     events.emit('user.login', _ctx.attributes);
-                    return resolve(_ctx);
+                    return resolve(_ctx.attributes);
                 });
             },
             (errors) => {

@@ -3,7 +3,7 @@ require('dotenv').config();
 
 var WebSocketServer = require('ws').Server;
 var express   = require('express');
-var db_h = require('./models/helper.js').db_methods;
+var db_h = require('./helper/helper.js').db_methods;
 var process = require('process');
     process.env.ROOT = process.cwd()+'/';
 
@@ -22,13 +22,13 @@ var server = require('http').Server(app);
 
 var wss = {};
     wss['users'] = new WebSocketServer({server: server, path: '/users'});
-    require('./watcher/users.js')(wss['users']);
+    require('./nodes/users/users.js')(wss['users']);
 
-    wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
-    require('./watcher/users-stream.js')(wss['users-stream']);
+    // wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
+    // require('./watcher/users-stream.js')(wss['users-stream']);
 
-    wss['chats-stream'] = new WebSocketServer({server: server, path: '/chats-stream'});
-    require('./watcher/chats-stream.js')(wss['chats-stream'], WebSocketServer, server);
+    // wss['chats-stream'] = new WebSocketServer({server: server, path: '/chats-stream'});
+    // require('./watcher/chats-stream.js')(wss['chats-stream'], WebSocketServer, server);
 
 var UserFactory = require('./models/user.js');
 

@@ -49,8 +49,7 @@ module.exports = function(wss, WebSocketServer, server){
                                     msg.content.source = _refe;
 
                                     wss['chats'][chatInstance._ref] = new WebSocketServer({server: server, path: '/chats/'+chatInstance._ref });
-                                        ChatNode(wss['chats'][chatInstance._ref], chatInstance._ref); // new is required here
-                                                                                                      // better require?
+                                        new ChatNode(wss['chats'][chatInstance._ref], chatInstance._ref);
 
                                     var populateDataRespAndSend =  function(source, dest){
                                         var _t_DAT = {
@@ -64,6 +63,8 @@ module.exports = function(wss, WebSocketServer, server){
                                             }
                                         };
 
+                                        console.log("Sending to: "+_t_DAT.jsonArgs.destination.name);
+
                                         userAvailableList[_t_DAT.destination].send(JSON.stringify(formatResponseOutput(_t_DAT)));
                                     };
 
@@ -72,6 +73,7 @@ module.exports = function(wss, WebSocketServer, server){
                                         _promises.push(userInstance.loadAttributes(_refe, true, 'clean'));
                                     
                                     Promise.all(_promises).then( values => {
+                                        console.log("Request by: "+values[1].name)
                                         populateDataRespAndSend(values[0], values[1]);
                                         populateDataRespAndSend(values[1], values[0]);
                                     });
