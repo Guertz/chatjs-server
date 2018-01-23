@@ -30,6 +30,8 @@ module.exports = function(wss, WebSocketServer, server){
                     if(msg.type && msg.content){
                         switch(msg.type){
                             case 'connect':
+                                // _id moved to => user
+                                // use auth
                                 _refe = msg.content._id;
                                 userAvailableList[msg.content._id] = ws;
                                 

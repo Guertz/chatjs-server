@@ -57,7 +57,7 @@ User.prototype.connect = function(id){
 
     return new Promise((resolve, reject) => {
         _ctx.attributes._id = id;
-        _ctx.loadAttributes(id).then(
+        _ctx.loadAttributes(id, true).then(
             (success) => {
                 database.update({ _id: id}, _ctx.attributes, { }, function(err, numReplaced){
                     

@@ -1,8 +1,8 @@
 var baseResponse = {
-    error: 0,
+    status: 0,
     ok: true,
     content: {},
-    msg: ""
+    error: ""
 };
 
 var errorTypes = {
@@ -25,8 +25,8 @@ var response = {
         if(Array.isArray(errors) && errors.lenght > 0){
             var error = errors[0];
 
-                response.error = error.code;
-                response.msg = error.name + ":" + error.flags;
+                response.status = error.code;
+                response.error = error.name + ":" + error.flags;
                 response.ok = false;
         }
 

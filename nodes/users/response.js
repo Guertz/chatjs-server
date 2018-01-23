@@ -8,7 +8,7 @@ var errorTypes = {
 
 var successTypes = {
     successLogin: {
-        user: "",
+        user: {},
         online: false
     }
 }
@@ -16,10 +16,11 @@ var successTypes = {
 module.exports = {
     getResponseContent: function(type, data) {
         // throw type not found exception
+
         var content = Object.assign({}, successTypes[type]);
         
         if(data) {
-            content.user = type._id;
+            content.user = data;
             content.online = true;
         }
 
