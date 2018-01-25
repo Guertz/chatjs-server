@@ -18,17 +18,19 @@ var getError = function(type){
 }
 
 var response = {
-    createResponse: function(content = false, errors = false){
+    createSuccess: function(content){
         var response = Object.assign({}, baseResponse);
             response.content = content;
 
-        if(Array.isArray(errors) && errors.lenght > 0){
-            var error = errors[0];
+        return response;
+    },
+    createError: function(error, content = {}) {
+        var response = Object.assign({}, baseResponse);
+            response.content = content;
 
-                response.status = error.code;
-                response.error = error.name + ":" + error.flags;
-                response.ok = false;
-        }
+        response.status = error.code;
+        response.error = error.name + ":" + error.flags;
+        response.ok = false;
 
         return response;
     },
@@ -36,6 +38,7 @@ var response = {
         var errors = [];
 
         try{
+            
             socket.send(JSON.stringify(response));
 
         }catch(err){

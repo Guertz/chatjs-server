@@ -17,7 +17,7 @@ var keepKeys = function(obj, keys){
 }
 
 var refreshContext = function(){
-  db.update({}, { $set: { online: false, session: "" } }, { multi: true }, function (err, numReplaced) {
+  db.update({}, { $set: { online: false } }, { multi: true }, function (err, numReplaced) {
     console.log("Refreshed total of: "+numReplaced);
   });
 }

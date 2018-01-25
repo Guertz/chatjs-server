@@ -21,11 +21,11 @@ db_h.refreshContext();
 var server = require('http').Server(app);
 
 var wss = {};
-    wss['users'] = new WebSocketServer({server: server, path: '/users'});
-    require('./nodes/users/users.js')(wss['users']);
+    wss['user'] = new WebSocketServer({server: server, path: '/user'});
+    require('./nodes/user/user.js')(wss['user']);
 
-    // wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
-    // require('./watcher/users-stream.js')(wss['users-stream']);
+    wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
+    require('./nodes/users/users.js')(wss['users-stream']);
 
     // wss['chats-stream'] = new WebSocketServer({server: server, path: '/chats-stream'});
     // require('./watcher/chats-stream.js')(wss['chats-stream'], WebSocketServer, server);

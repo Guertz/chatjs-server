@@ -1,59 +1,96 @@
-var UserFactory = require('../../models/user.js');
+const events = require('../../helper/helper.js').events;
+var database  = require('../../helper/helper.js').database;
 var transport = require('../../helper/connection.js');
 
 var getUserReqType = require('./request.js').getRequestType;
 var getResponseContent = require('./response.js').getResponseContent;
-var getResponseErrors = require('./response.js').getResponseErrors;
 
-var userActionList = ['login', 'disconnect'];
+const userActionList = ['listen'];
+
+var userListenersLogin = {};
+var userListenersLogout = {};
 
 module.exports = function(wss){ 
 
     wss.on('connection', function(ws) {
         
-        var currentUser = (new UserFactory());
+        var _id = false;
 
-        ws.on('message', function(data, flag){
+        var eventLogin = function(user) {
 
-            var request = transport.request.parseRequest(data, flag, userActionList);
+            database.find({ $where: function() { return (this.online && this._id != _id); } }, function (err, docs) {
 
-            // TODO: refactor create response on failure
+                if(!docs)
+                    docs = [];
 
-            if(!request.errors.length){
-                switch(request.content.type) {
-                    case 'login':
-                        var contentErrors = transport.request.validateContent(request.content, getUserReqType("login"));
-                        if(!contentErrors.length){
-                            currentUser.connect(request.content.user).then(
-                                (user) =>{ 
-                                    // user.toResponse method
-                                    transport.response.send(transport.response.createResponse(getResponseContent("successLogin", user), false), ws);
-                                  },
-                                (err) => {
-                                    transport.response.send(transport.response.createResponse(getResponseContent("successLogin", false), getResponseErrors("errorLogin")), ws);
-                                }
-                            );
-                        } else {
-                            transport.response.send(transport.response.createResponse(contentErrors), ws);
-                        }
+                transport.response.send(
+                    transport.response.createSuccess(
+                        docs), 
+                    ws);
 
-                    // case 'disconnect':
-                    //     currentUser.disconnect();
-                    //     ws.send(response.logout.success());
-                    //   break;
-                }
-            } else {
-                transport.response.send(transport.response.createResponse(request.errors), ws);
-            }
-
-        });
+            });
+        }
         
+        var eventLogout = function(user) {
+            database.find({ $where: function() { return (this.online && this._id != _id); } }, function (err, docs) {
+                transport.response.send(
+                    transport.response.createSuccess(
+                        docs), 
+                    ws);
+            });
+        }
+        
+        ws.on('message', function(data, flag) {
+
+            transport.request(data, flag, userActionList, true).then(
+                (RequestHandler) => {
+                    var content = RequestHandler.getRequest(getUserReqType("listen"));
+                    if(!RequestHandler.hasErrors()){
+
+                        switch(content.type) {
+                            case 'listen':
+
+                                _id = RequestHandler.getAuth().key;
+
+                                userListenersLogin[_id] = eventLogin;
+                                userListenersLogout[_id] = eventLogout;
+                                
+                                events.addListener('user.login', userListenersLogin[_id]);
+                                events.addListener('user.logout', userListenersLogout[_id]);
+                                
+                                eventLogin();
+
+                                break;
+                        }
+                    } else {
+                        var error = RequestHandler.getFirstError();
+                            transport.response.send(transport.response.createError(error), ws);
+                    }
+                },
+                (error) => {
+                    transport.response.send(transport.response.createError(error), ws);
+                }
+            );
+                                
+        });
+
         ws.on('close', function() {
-            currentUser.disconnect();
+            if(_id){
+                events.removeListener('user.login',  userListenersLogin[_id]);
+                events.removeListener('user.logout', userListenersLogout[_id]);
+
+                _id = false;
+            }
         });
 
         ws.on('error', function(e) {
-            currentUser.disconnect();
+            if(_id){
+                events.removeListener('user.login',  userListenersLogin[_id]);
+                events.removeListener('user.logout', userListenersLogout[_id]);
+
+                _id = false;
+            }
         });
+        
     });
-};
+}; 

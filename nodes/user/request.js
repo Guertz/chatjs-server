@@ -1,6 +1,7 @@
 var requestTypes = {
-    listen: {
-        type: ""
+    login: {
+        type: "",
+        user: ""
     }
 }
 
