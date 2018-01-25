@@ -4,7 +4,7 @@ var transport = require('../../helper/connection.js');
 var getUserReqType = require('./request.js').getRequestType;
 var getResponse = require('./response.js');
 
-var userActionList = ['login', 'logout'];
+var userActionList = {'login': false,  'logout': true};
 
 module.exports = function(wss){ 
 
@@ -32,13 +32,15 @@ module.exports = function(wss){
                                 currentUser.connect(content.user).then(
                                     (user) => transport.response.send(
                                                 transport.response.createSuccess(
-                                                    getResponse.Login(user)
+                                                    getResponse.Login(user),
+                                                    "login"
                                                 ), 
                                                 ws),
                                         
                                     (err) => transport.response.send(
                                                 transport.response.createSuccess(
-                                                    getResponse.Login(false)
+                                                    getResponse.Login(false),
+                                                    "login"
                                                 ),
                                                 ws)
                                     
@@ -49,11 +51,11 @@ module.exports = function(wss){
                             // Use of events to notify
                             // The user wont be able to logout from other parts of the application
                             case 'logout':
-                                console.log("# logout received");
                                 currentUser.disconnect();
                                 transport.response.send(
                                     transport.response.createSuccess(
-                                        getResponse.Logout()
+                                        getResponse.Logout(),
+                                        "logout"
                                     ),
                                     ws);
 

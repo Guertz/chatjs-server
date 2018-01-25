@@ -18,16 +18,20 @@ var getError = function(type){
 }
 
 var response = {
-    createSuccess: function(content){
+    createSuccess: function(content, type = ""){
         var response = Object.assign({}, baseResponse);
             response.content = content;
+            // HARDCODED; optimize
+            response.content["type"] = type;
 
         return response;
     },
-    createError: function(error, content = {}) {
+    createError: function(error, action = "", content = {}) {
         var response = Object.assign({}, baseResponse);
             response.content = content;
 
+        // HARDCODED; optimize
+        response.content["type"] = type;
         response.status = error.code;
         response.error = error.name + ":" + error.flags;
         response.ok = false;

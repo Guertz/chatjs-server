@@ -54,7 +54,7 @@ const RequestContext = function(_parsed, _auth, _request) {
 }
 
 
-const RequestWrapper = function(requestSerialized, requestFlags, actionList = false, AUTH_REQUIRED = false) {
+const RequestWrapper = function(requestSerialized, requestFlags, actionList = false) {
 
     var _parsed = undefined;
 
@@ -73,14 +73,13 @@ const RequestWrapper = function(requestSerialized, requestFlags, actionList = fa
 
     var matchesAction = function() {
         return (_parsed.content["type"] && 
-                Array.isArray(actionList) &&
-                actionList.includes(_parsed.content["type"]));
+                Object.keys(actionList).includes(_parsed.content["type"]));
     }
 
     var parseAuth = function(){
         return new Promise((resolve, reject) => {
             
-            if(AUTH_REQUIRED) {
+            if(actionList[_parsed.content["type"]]) {
 
                 // Se auth richiesta, controlla
                 var AUTH_KEY = _parsed["AUTH"];
@@ -118,6 +117,13 @@ const RequestWrapper = function(requestSerialized, requestFlags, actionList = fa
 
                 _parsed = JSON.parse(requestSerialized); 
                 
+                if(!matchesAction()) {
+                    var error = getError("invalidAction");
+                        error.flags = _parsed.content["type"];
+            
+                        return reject(error);
+                }
+                
                 return parseAuth().then(
                     (success) => {
                         var baseRequest = Object.assign({}, baseRequest);
@@ -136,13 +142,6 @@ const RequestWrapper = function(requestSerialized, requestFlags, actionList = fa
 
                         if(attributeError)
                             return reject(attributeError);
-        
-                        if(!matchesAction()) {
-                            var error = getError("invalidAction");
-                                error.flags = _parsed.content["type"];
-                    
-                                return reject(error);
-                        }
         
                         _content = _parsed.content;
 

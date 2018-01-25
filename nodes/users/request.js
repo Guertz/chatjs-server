@@ -1,5 +1,5 @@
 var requestTypes = {
-    listen: {
+    open: {
         type: ""
     }
 }

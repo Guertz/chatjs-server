@@ -3,9 +3,9 @@ var database  = require('../../helper/helper.js').database;
 var transport = require('../../helper/connection.js');
 
 var getUserReqType = require('./request.js').getRequestType;
-var getResponseContent = require('./response.js').getResponseContent;
+var getResponse = require('./response.js');
 
-const userActionList = ['listen'];
+const userActionList = { 'open': true, 'close': false};
 
 var userListenersLogin = {};
 var userListenersLogout = {};
@@ -16,6 +16,15 @@ module.exports = function(wss){
         
         var _id = false;
 
+        var _ubind = function(){
+            if(_id) {
+                events.removeListener('user.login',  userListenersLogin[_id]);
+                events.removeListener('user.logout', userListenersLogout[_id]);
+
+                _id = false;
+            }
+        }
+
         var eventLogin = function(user) {
 
             database.find({ $where: function() { return (this.online && this._id != _id); } }, function (err, docs) {
@@ -23,9 +32,12 @@ module.exports = function(wss){
                 if(!docs)
                     docs = [];
 
+                console.log("Sending after event login");
+
                 transport.response.send(
                     transport.response.createSuccess(
-                        docs), 
+                        getResponse.List(docs), 
+                        "open"), 
                     ws);
 
             });
@@ -33,25 +45,33 @@ module.exports = function(wss){
         
         var eventLogout = function(user) {
             database.find({ $where: function() { return (this.online && this._id != _id); } }, function (err, docs) {
+                
+                if(!docs)
+                    docs = [];
+
+                console.log("Sending after event logout");
+                
                 transport.response.send(
                     transport.response.createSuccess(
-                        docs), 
+                        getResponse.List(docs), 
+                        "open"), 
                     ws);
             });
         }
         
         ws.on('message', function(data, flag) {
 
-            transport.request(data, flag, userActionList, true).then(
+            transport.request(data, flag, userActionList).then(
                 (RequestHandler) => {
-                    var content = RequestHandler.getRequest(getUserReqType("listen"));
+                    var content = RequestHandler.getRequest(getUserReqType("open"));
                     if(!RequestHandler.hasErrors()){
 
                         switch(content.type) {
-                            case 'listen':
+                            case 'open':
 
                                 _id = RequestHandler.getAuth().key;
 
+                                console.log("Watching for: #"+_id);
                                 userListenersLogin[_id] = eventLogin;
                                 userListenersLogout[_id] = eventLogout;
                                 
@@ -60,6 +80,14 @@ module.exports = function(wss){
                                 
                                 eventLogin();
 
+                                break;
+                            case 'close':
+                                _ubind();
+                                transport.response.send(
+                                    transport.response.createSuccess(
+                                        getResponse.List(), 
+                                        "close"), 
+                                    ws);
                                 break;
                         }
                     } else {
@@ -75,21 +103,11 @@ module.exports = function(wss){
         });
 
         ws.on('close', function() {
-            if(_id){
-                events.removeListener('user.login',  userListenersLogin[_id]);
-                events.removeListener('user.logout', userListenersLogout[_id]);
-
-                _id = false;
-            }
+            _ubind();
         });
 
         ws.on('error', function(e) {
-            if(_id){
-                events.removeListener('user.login',  userListenersLogin[_id]);
-                events.removeListener('user.logout', userListenersLogout[_id]);
-
-                _id = false;
-            }
+            _ubind();
         });
         
     });

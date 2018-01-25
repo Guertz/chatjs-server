@@ -7,14 +7,10 @@ var baseUser = {
 
 var baseResponse = {
     baseLogin: {
-        // corresponds to login in client enum
-        action: 1,
         user: baseUser,
         online: false
     },
     baseLogout: {
-        // correspons to logout in client enum
-        action: 0,
         user: baseUser,
         online: false
     }

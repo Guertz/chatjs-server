@@ -21,8 +21,8 @@ db_h.refreshContext();
 var server = require('http').Server(app);
 
 var wss = {};
-    wss['user'] = new WebSocketServer({server: server, path: '/user'});
-    require('./nodes/user/user.js')(wss['user']);
+    wss['auth'] = new WebSocketServer({server: server, path: '/auth'});
+    require('./nodes/auth/auth.js')(wss['auth']);
 
     wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
     require('./nodes/users/users.js')(wss['users-stream']);
