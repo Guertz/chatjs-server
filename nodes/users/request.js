@@ -1,11 +1,7 @@
-var requestTypes = {
-    open: {
-        type: ""
-    }
+var requestType =  {
+    type: ""  
 }
 
-module.exports = {
-    getRequestType: function(type) {
-        return Object.assign({}, requestTypes[type]);
-    }
+module.exports = function() {
+    return Object.assign({}, requestType);
 }

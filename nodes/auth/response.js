@@ -6,34 +6,20 @@ var baseUser = {
 };
 
 var baseResponse = {
-    baseLogin: {
-        user: baseUser,
-        online: false
-    },
-    baseLogout: {
-        user: baseUser,
-        online: false
-    }
+    user: baseUser,
+    online: false
 }
 
 // throw type not found exception
 // TODO: user.toResponse();
-module.exports = {
-    Login: function(auth_status) {
+module.exports = function(auth_status = false) {
     
-        var content = Object.assign({}, baseResponse["baseLogin"]);
-        
-        if(auth_status) {
-            content.user = auth_status;
-            content.online = true;
-        }
-
-        return  content;
-    },
-    Logout: function(){
-
-        var content = Object.assign({}, baseResponse["baseLogout"]);
-
-        return  content;
+    var content = Object.assign({}, baseResponse);
+    
+    if(auth_status) {
+        content.user = auth_status;
+        content.online = true;
     }
+
+    return  content;
 }

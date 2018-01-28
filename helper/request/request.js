@@ -2,19 +2,18 @@ var UserFactory = require("../../models/user");
 var getError    = require("./errors/errors");
 var baseRequest = require("./format/format");
 
-const RequestContext = function(_parsed, _auth, _request) {
+const RequestContext = function(_parsed, _auth) {
 
     var _validated = false;
     var _contentErrors = [];
 
     var validate = function(format) {
 
-        _validated = true;
-        
+        //var format = formats[_parsed.content["type"]];        
 
         Object.keys(format).forEach((key, index) => {
 
-            if(typeof _request[key] !== typeof format[key]){
+            if(typeof _parsed.content[key] !== typeof format[key]){
                 var error = getError("malformedContent");
                     error.flags = key;
 
@@ -24,16 +23,18 @@ const RequestContext = function(_parsed, _auth, _request) {
             }
 
         });
+
+        _validated = true;
         
     };
 
     this.getRequest = function(format = false) {
 
         if(format && !_validated) {
-            validate(format);
+            validate(formats);
         }
 
-        return Object.assign({}, _request);
+        return Object.assign({}, _parsed.content);
     }
 
     this.hasErrors = function(){
@@ -65,10 +66,8 @@ const RequestWrapper = function(requestSerialized, requestFlags, actionList = fa
         }
     }
     
-    var _content = {};
-
     var resolveRequestSuccesfully = function() {
-        return new RequestContext(_parsed, _auth, _content);
+        return new RequestContext(_parsed, _auth);
     }
 
     var matchesAction = function() {
@@ -142,8 +141,6 @@ const RequestWrapper = function(requestSerialized, requestFlags, actionList = fa
 
                         if(attributeError)
                             return reject(attributeError);
-        
-                        _content = _parsed.content;
 
                         return resolve(resolveRequestSuccesfully());
                     },

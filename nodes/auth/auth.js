@@ -1,7 +1,7 @@
 var UserFactory = require('../../models/user.js');
 var transport = require('../../helper/connection.js');
 
-var getUserReqType = require('./request.js').getRequestType;
+var getRequests = require('./request.js');
 var getResponse = require('./response.js');
 
 var userActionList = {'login': false,  'logout': true};
@@ -25,21 +25,21 @@ module.exports = function(wss){
             //                c++ handled component/provider
             transport.request(data, flag, userActionList).then(
                 (RequestHandler) => {
-                    var content = RequestHandler.getRequest(getUserReqType("login"));
+                    var content = RequestHandler.getRequest(getRequests());
                     if(!RequestHandler.hasErrors()){
                         switch(content.type) {
                             case 'login':
                                 currentUser.connect(content.user).then(
                                     (user) => transport.response.send(
                                                 transport.response.createSuccess(
-                                                    getResponse.Login(user),
+                                                    getResponse(user),
                                                     "login"
                                                 ), 
                                                 ws),
                                         
                                     (err) => transport.response.send(
                                                 transport.response.createSuccess(
-                                                    getResponse.Login(false),
+                                                    getResponse(),
                                                     "login"
                                                 ),
                                                 ws)
@@ -54,7 +54,7 @@ module.exports = function(wss){
                                 currentUser.disconnect();
                                 transport.response.send(
                                     transport.response.createSuccess(
-                                        getResponse.Logout(),
+                                        getResponse(),
                                         "logout"
                                     ),
                                     ws);

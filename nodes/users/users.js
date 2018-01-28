@@ -2,7 +2,7 @@ const events = require('../../helper/helper.js').events;
 var database  = require('../../helper/helper.js').database;
 var transport = require('../../helper/connection.js');
 
-var getUserReqType = require('./request.js').getRequestType;
+var getRequests = require('./request.js');
 var getResponse = require('./response.js');
 
 const userActionList = { 'open': true, 'close': false};
@@ -36,7 +36,7 @@ module.exports = function(wss){
 
                 transport.response.send(
                     transport.response.createSuccess(
-                        getResponse.List(docs), 
+                        getResponse(docs), 
                         "open"), 
                     ws);
 
@@ -53,7 +53,7 @@ module.exports = function(wss){
                 
                 transport.response.send(
                     transport.response.createSuccess(
-                        getResponse.List(docs), 
+                        getResponse(docs), 
                         "open"), 
                     ws);
             });
@@ -63,7 +63,7 @@ module.exports = function(wss){
 
             transport.request(data, flag, userActionList).then(
                 (RequestHandler) => {
-                    var content = RequestHandler.getRequest(getUserReqType("open"));
+                    var content = RequestHandler.getRequest(getRequests());
                     if(!RequestHandler.hasErrors()){
 
                         switch(content.type) {
@@ -85,7 +85,7 @@ module.exports = function(wss){
                                 _ubind();
                                 transport.response.send(
                                     transport.response.createSuccess(
-                                        getResponse.List(), 
+                                        getResponse(), 
                                         "close"), 
                                     ws);
                                 break;

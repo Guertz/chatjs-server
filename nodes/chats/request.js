@@ -1,8 +1,8 @@
 var requestType = {
     type: "",
-    user: ""
+    destination: ""
 }
 
-module.exports =  function() {
+module.exports = function() {
     return Object.assign({}, requestType);
 }

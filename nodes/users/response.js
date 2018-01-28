@@ -1,18 +1,12 @@
-
-
 var baseResponse = {
-    baseList: {
-        usersList: []
-    }
+    usersList: []
 };
 
-module.exports = {
-    List: function(docs = []) {
-    
-        var content = Object.assign({}, baseResponse["baseList"]);
-            content.usersList = docs;
-        
+module.exports = function(docs = []) {
 
-        return  content;
-    }
+    var content = Object.assign({}, baseResponse);
+        content.usersList = docs;
+    
+
+    return  content;
 }
