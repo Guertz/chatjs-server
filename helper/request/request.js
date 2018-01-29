@@ -9,8 +9,6 @@ const RequestContext = function(_parsed, _auth) {
 
     var validate = function(format) {
 
-        //var format = formats[_parsed.content["type"]];        
-
         Object.keys(format).forEach((key, index) => {
 
             if(typeof _parsed.content[key] !== typeof format[key]){
@@ -31,7 +29,7 @@ const RequestContext = function(_parsed, _auth) {
     this.getRequest = function(format = false) {
 
         if(format && !_validated) {
-            validate(formats);
+            validate(format);
         }
 
         return Object.assign({}, _parsed.content);

@@ -1,6 +1,6 @@
 const ChatFactory = require('../../models/chat.js');
 var UserFactory = require('../../models/user.js');
-var ChatNode = require('./sub-node/chats.js');
+var ChatNode = require('./sub-nodes/chat.js');
 
 var transport = require('../../helper/connection.js');
 

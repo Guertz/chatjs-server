@@ -1,6 +1,6 @@
 const MessageFactory = require('../../../models/message.js');
 
-var transport = require('../../helper/connection.js');
+var transport = require('../../../helper/connection.js');
 
 var getRequests = require('./request.js');
 var getResponse = require('./response.js');
@@ -15,44 +15,48 @@ module.exports = function(wss, _ref){
 
     wss.on('connection', function(ws) {
 
-        transport.request(data, flag, userActionList).then(
-            (RequestHandler) => {
-                
-                var content = RequestHandler.getRequest(getRequests());
-                if(!RequestHandler.hasErrors()){
-                    switch(content.type){
-                        case 'join':
+        ws.on('message', function(data, flag) {
+            transport.request(data, flag, userActionList).then(
+                (RequestHandler) => {
+                    
+                    var content = RequestHandler.getRequest(getRequests());
+                    if(!RequestHandler.hasErrors()){
+                        switch(content.type){
+                            case 'join':
 
-                            userInThisChat[RequestHandler.getAuth().key] = ws;
-                            break;    
+                                userInThisChat[RequestHandler.getAuth().key] = ws;
+                                break;    
 
-                        case 'send':
+                            case 'send':
 
-                            var messageBlock = (new MessageFactory( 
-                                                    _ref, 
-                                                    RequestHandler.getAuth().user,
-                                                    content.text));
+                                console.log("Text: " + content.text);
+                                
+                                var messageBlock = (new MessageFactory( 
+                                                        {_ref: _ref}, 
+                                                        RequestHandler.getAuth().user,
+                                                        content.text));
 
-                            Object.keys(userInThisChat)
-                                .forEach((chatUserId) => {
+                                Object.keys(userInThisChat)
+                                    .forEach((chatUserId) => {
 
-                                    messageBlock.destinationUserId = chatUserId;
-                                    transport.response.send(
-                                        transport.response.createSuccess(
-                                            getResponse(messageBlock), 
-                                            "send"), 
-                                        userInThisChat[chatUserId]);
-                                });
+                                        messageBlock.destinationUserId = chatUserId;
+                                        transport.response.send(
+                                            transport.response.createSuccess(
+                                                getResponse(messageBlock), 
+                                                "send"), 
+                                            userInThisChat[chatUserId]);
+                                    });
 
-                            break;   
+                                break;   
+                        }
+                    } else {
+
                     }
-                } else {
+                },
+                (error) => {
 
                 }
-            },
-            (error) => {
-
-            }
-        );
+            );
+        })
     });
 };

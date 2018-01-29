@@ -27,8 +27,8 @@ var wss = {};
     wss['users-stream'] = new WebSocketServer({server: server, path: '/users-stream'});
     require('./nodes/users/users.js')(wss['users-stream']);
 
-    // wss['chats-stream'] = new WebSocketServer({server: server, path: '/chats-stream'});
-    // require('./watcher/chats-stream.js')(wss['chats-stream'], WebSocketServer, server);
+    wss['chats-stream'] = new WebSocketServer({server: server, path: '/chats-stream'});
+    require('./nodes/chats/chats.js')(wss['chats-stream'], WebSocketServer, server);
 
 var UserFactory = require('./models/user.js');
 
