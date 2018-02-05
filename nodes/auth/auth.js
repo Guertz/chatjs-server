@@ -14,9 +14,6 @@ module.exports = function(wss){
 
         ws.on('message', function(data, flag){
 
-            // TODO: per message authenticate user
-            // TODO: refactor create response on failure
-            // TODO: return errors
             // TODO: load attribute in parseAuth load attributes only if he is logged (_session)
             // TODO: split action errors
             //       level 1: error parsing content (before reading type)
@@ -38,9 +35,10 @@ module.exports = function(wss){
                                                 ws),
                                         
                                     (err) => transport.response.send(
-                                                transport.response.createSuccess(
-                                                    getResponse(),
-                                                    "login"
+                                                transport.response.createError(
+                                                    err,
+                                                    "login",
+                                                    getResponse()
                                                 ),
                                                 ws)
                                     

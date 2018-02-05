@@ -7,7 +7,6 @@ const keepKeys  = require('../helper/helper.js').keepKeys;
 
 const User = function(){
 
-    // TODO: verifica incrociata verificando auth_key (_id) && online flag (da interpretare come la sessione)
     var attributes = {
            _id: false,
           name: "",
@@ -26,15 +25,23 @@ const User = function(){
 
     }
 
-    var getError = function() {
+    var getError = function(type = 'default') {
         var error = {
-            parent: "invalidAuth",
-            name: "invalid-user",
-            flags: "",
-            code: 300
+            default: {
+                parent: "invalidAuth",
+                name: "invalid-user",
+                flags: "Ivalid credentials",
+                code: 300
+            },
+            already: {
+                parent: "invalidAuth",
+                name: "invalid-user",
+                flags: "Already logged in",
+                code: 305
+            }
         };
 
-        return Object.assign({},error);
+        return Object.assign({},error[type]);
     }
 
     var randomImage = function(){
@@ -53,14 +60,11 @@ const User = function(){
     this.loadAttributes = function(_id, force = false, _flags = false){
 
         return new Promise((resolve, reject) => {
-            if(force)
-                attributes.online = false;
-    
-            if(!attributes.online){
+            if(force || !attributes.online){
                 return database.findOne({ _id: _id }, function (err, doc) {
                     if(!err && doc){
                         attributes          = doc;
-                        attributes.online   = true;
+                        // attributes.online   = true;
                         attributes.image    =
                             attributes.image.replace(
                                 process.env.ASSETS, 
@@ -89,6 +93,12 @@ const User = function(){
             attributes._id = id;
             this.loadAttributes(id, true).then(
                 (SESSION) => {
+                    if(SESSION.online)
+                        return reject(getError('already'));
+
+                    SESSION.online = true;
+                    attributes.online = true,
+
                     database.update({ _id: id}, SESSION, { }, function(err, numReplaced){
                         
                         if(err){
@@ -157,7 +167,7 @@ const User = function(){
     }
 
     this.toString = function() {
-        console.log(` ID: ${attributes._id}, Name: ${attributes.name}`);
+        // console.log(` ID: ${attributes._id}, Name: ${attributes.name}`);
     }
 
 }

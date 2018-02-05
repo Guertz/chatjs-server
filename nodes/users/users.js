@@ -71,7 +71,7 @@ module.exports = function(wss){
 
                                 _id = RequestHandler.getAuth().key;
 
-                                console.log("Watching for: #"+_id);
+                                console.log("Watching for: #<user>"); // +_id);
                                 userListenersLogin[_id] = eventLogin;
                                 userListenersLogout[_id] = eventLogout;
                                 

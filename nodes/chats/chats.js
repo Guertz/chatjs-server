@@ -39,6 +39,7 @@ module.exports = function(wss, WebSocketServer, server){
                     if(!RequestHandler.hasErrors()){
                         switch(content.type) {
                             case "connect":
+                                _ubind();
                                 _id = RequestHandler.getAuth().key;
                                 userAvailableList[_id] = ws;
 

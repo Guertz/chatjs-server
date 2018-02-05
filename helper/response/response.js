@@ -8,7 +8,7 @@ var baseResponse = {
 var errorTypes = {
     channelClose: {
         name: "channel-closed",
-        flags: "",
+        flags: "Il canale è stato chiuso",
         code: -1
     }
 }
@@ -26,14 +26,14 @@ var response = {
 
         return response;
     },
-    createError: function(error, action = "", content = {}) {
+    createError: function(error, type = "", content = {}) {
         var response = Object.assign({}, baseResponse);
             response.content = content;
 
         // HARDCODED; optimize
         response.content["type"] = type;
         response.status = error.code;
-        response.error = error.name + ":" + error.flags;
+        response.error = error.flags; // error.name + ":" + error.flags;
         response.ok = false;
 
         return response;
