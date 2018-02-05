@@ -1,35 +1,24 @@
 # Server for chat.js
-> Developed with nodejs and websockets
-> A minimal Chat application
-
-## Prerequisites
-* C++11
-
-> Windows
-* Git bash on windows (for Makefile commands)
-* TDM-GCC 64 (mingw32-make, g++)
-
-> Linux
-* build-essential (make, g++)
-* libwebkit2gtk-4.0-dev
+> Developed with nodejs and websockets.
+> A minimal Chat application.
 
 ## Run
 > Completata la preparazione con le dipendenze richieste
 ```
 $ node index.js
 ```
-#### Run as release mode
+#### Run as indipendent mode
 ```
 $ nohup node index.js > storage/assets/log.txt 2> storage/assets/err.txt
 ```
 
 ## Dependencies
 [nodejs 8.x, npm](https://nodejs.org/en/download/package-manager/)
-> In cmd-only environments you may also need:
-[libpng12-0](http://security.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.50-1ubuntu2.14.04.2_amd64.deb)
-libcairo2-dev
-libpango1.0-dev
-libgif-dev
+> In cmd-only environments you may also need:  
+[libpng12-0](http://security.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.50-1ubuntu2.14.04.2_amd64.deb)  
+libcairo2-dev  
+libpango1.0-dev  
+libgif-dev  
 
 ## Configure:
 ```
