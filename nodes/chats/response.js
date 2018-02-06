@@ -10,7 +10,8 @@ var baseResponse = {
         reference: "",
         destination: baseUser,
         from: baseUser,
-        creator: ""
+        creator: "",
+        messages: []
     }
 }
 

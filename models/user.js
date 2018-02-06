@@ -30,13 +30,13 @@ const User = function(){
             default: {
                 parent: "invalidAuth",
                 name: "invalid-user",
-                flags: "Ivalid credentials",
+                flags: "Credenziali invalide",
                 code: 300
             },
             already: {
                 parent: "invalidAuth",
                 name: "invalid-user",
-                flags: "Already logged in",
+                flags: "Utente già collegato",
                 code: 305
             }
         };
