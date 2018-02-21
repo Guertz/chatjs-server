@@ -5,7 +5,7 @@ function Message(chatInstance, senderAvatar = {}, text = ""){
     this.text = text;
     this.senderAvatar = senderAvatar;
     this.destinationUserId = "";
-    this.time = moment().locale('it').format('HH:mm');
+    this.time = moment().locale('it').add(1, 'h').format('HH:mm');
 }
 
 module.exports = Message;

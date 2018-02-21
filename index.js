@@ -1,6 +1,7 @@
 // "use strict"; // http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 require('dotenv').config();
 
+var path = require('path');
 var WebSocketServer = require('ws').Server;
 var express   = require('express');
 var db_h = require('./helper/helper.js').db_methods;
@@ -39,4 +40,8 @@ app.get('/users/create/:userName', function (req, res) {
         res.send("User created with id: "+user._id);
     });
     
+});
+
+app.get('/users/form', function (req, res) {
+    res.sendFile(path.join(__dirname + '/routes/form/index.html'))
 });
