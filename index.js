@@ -35,8 +35,8 @@ var UserFactory = require('./models/user.js');
 
 server.listen(process.env.PORT);
 
-app.get('/users/create/:userName', function (req, res) {
-    (new UserFactory()).create(req.params.userName).then( user => {
+app.get('/users/create', function (req, res) {
+    (new UserFactory()).create(req.query.name).then( user => {
         res.send("User created with id: "+user._id);
     });
     
